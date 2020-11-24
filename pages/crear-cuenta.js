@@ -17,8 +17,6 @@ const STATE_INICIAL = {
   password: ''
 }
 
-
-
 const CrearCuenta = () => {
 
   const [ error, guardarError ] = useState(false);
