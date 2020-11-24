@@ -24,8 +24,14 @@ const Login = () => {
   //extraer datos del objeto valores
   const { email, password } = valores
 
-  function iniciarSesion() {
-    console.log('Iniciando sesion...');
+  async function iniciarSesion() {
+    try {
+      await firebase.login(email, password);
+      Router.push('/');
+    } catch (error) {
+      console.error('Hubo un error al iniciar sesion', error.message);
+      guardarError(error.message);
+    }
   }
 
   return (
