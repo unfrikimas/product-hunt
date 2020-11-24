@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from '@emotion/react';
+import Router from 'next/router';
 import Layout from '../components/layouts/Layout';
 import { Formulario, Campo, InputSubmit, Error } from '../components/ui/Formulario';
 
@@ -20,6 +21,8 @@ const STATE_INICIAL = {
 
 const CrearCuenta = () => {
 
+  const [ error, guardarError ] = useState(false);
+
   const { valores, errores, handleSubmit, handleChange, handleBlur } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
 
   //extraer datos del objeto valores
@@ -28,9 +31,10 @@ const CrearCuenta = () => {
   async function crearCuenta() {
     try {
       await firebase.registrar(nombre, email, password);
+      Router.push('/');
     } catch (error) {
       console.error('Hubo un error al crear el usuario', error.message);
-      
+      guardarError(error.message);
     }
   }
 
@@ -57,7 +61,7 @@ const CrearCuenta = () => {
                 name="nombre"
                 value={nombre}
                 onChange={handleChange}
-                onBlur={handleBlur}
+                // onBlur={handleBlur}
               />
             </Campo>
             { errores.nombre && <Error>{ errores.nombre }</Error> }
@@ -70,7 +74,7 @@ const CrearCuenta = () => {
                 name="email"
                 value={email}
                 onChange={handleChange}
-                onBlur={handleBlur}
+                // onBlur={handleBlur}
               />
             </Campo>
             { errores.email && <Error>{ errores.email }</Error> }
@@ -83,10 +87,11 @@ const CrearCuenta = () => {
                 name="password"
                 value={password}
                 onChange={handleChange}
-                onBlur={handleBlur}
+                // onBlur={handleBlur}
               />
             </Campo>
             { errores.password && <Error>{ errores.password }</Error> }
+            { error && <Error>{ error }</Error> }
             <InputSubmit 
               type="submit"
               value="Crear cuenta"
