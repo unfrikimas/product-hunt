@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from '@emotion/react';
 import Layout from '../components/layouts/Layout';
-import { Formulario, Campo, InputSubmit } from '../components/ui/Formulario';
+import { Formulario, Campo, InputSubmit, Error } from '../components/ui/Formulario';
 
 //validaciones
 import useValidacion from '../hooks/useValidacion';
@@ -13,9 +13,14 @@ const STATE_INICIAL = {
   password: ''
 }
 
+
+
 const CrearCuenta = () => {
 
-  const { valores, errores, submitForm, handleSubmit, handleChange } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+  const { valores, errores, handleSubmit, handleChange, handleBlur } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+
+  //extraer datos del objeto valores
+  const { nombre, email, password } = valores
 
   function crearCuenta() {
     console.log('Creando cuenta...')
@@ -31,7 +36,10 @@ const CrearCuenta = () => {
               margin-top: 5rem;
             `}
           >Crear cuenta</h1>
-          <Formulario>
+          <Formulario
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <Campo>
               <label htmlFor="nombre">Nombre</label>
               <input 
@@ -39,8 +47,12 @@ const CrearCuenta = () => {
                 id="nombre"
                 placeholder="Tu nombre"
                 name="nombre"
+                value={nombre}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Campo>
+            { errores.nombre && <Error>{ errores.nombre }</Error> }
             <Campo>
               <label htmlFor="email">Email</label>
               <input 
@@ -48,8 +60,12 @@ const CrearCuenta = () => {
                 id="email"
                 placeholder="Tu email"
                 name="email"
+                value={email}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Campo>
+            { errores.email && <Error>{ errores.email }</Error> }
             <Campo>
               <label htmlFor="password">Password</label>
               <input 
@@ -57,8 +73,12 @@ const CrearCuenta = () => {
                 id="password"
                 placeholder="Tu password"
                 name="password"
+                value={password}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Campo>
+            { errores.password && <Error>{ errores.password }</Error> }
             <InputSubmit 
               type="submit"
               value="Crear cuenta"
