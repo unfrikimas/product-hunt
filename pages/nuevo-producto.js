@@ -14,13 +14,14 @@ import firebase from "../firebase";
 
 //validaciones
 import useValidacion from "../hooks/useValidacion";
-import validarCrearCuenta from "../validacion/validarCrearCuenta";
+import validarCrearProducto from "../validacion/validarCrearProducto";
 
 const STATE_INICIAL = {
   nombre: "",
   empresa: "",
   imagen: "",
-  url: ""
+  url: "",
+  descripcion: ""
 };
 
 const NuevoProducto = () => {
@@ -33,7 +34,7 @@ const NuevoProducto = () => {
     handleSubmit,
     handleChange,
     handleBlur,
-  } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+  } = useValidacion(STATE_INICIAL, validarCrearProducto);
 
   //extraer datos del objeto valores
   const { nombre, empresa, imagen, url, descripcion } = valores;
@@ -86,7 +87,7 @@ const NuevoProducto = () => {
                 />
               </Campo>
               {errores.empresa && <Error>{errores.empresa}</Error>}
-              <Campo>
+              {/* <Campo>
                 <label htmlFor="imagen">Imagen</label>
                 <input
                   type="file"
@@ -97,13 +98,14 @@ const NuevoProducto = () => {
                   // onBlur={handleBlur}
                 />
               </Campo>
-              {errores.imagen && <Error>{errores.imagen}</Error>}
+              {errores.imagen && <Error>{errores.imagen}</Error>} */}
               <Campo>
                 <label htmlFor="url">URL</label>
                 <input
                   type="url"
                   id="url"
                   name="url"
+                  placeholder="URL de tu producto"
                   value={url}
                   onChange={handleChange}
                   // onBlur={handleBlur}
