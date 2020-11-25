@@ -14,7 +14,7 @@ export default function validarCrearProducto(valores) {
     //validar url
     if(!valores.url) {
         errores.url = 'La URL es obligatoria';
-    } else if( !/^(ftp|http|https):\/\/[^ "]+$/.test(valroes.url) ) {
+    } else if( !/^(ftp|http|https):\/\/[^ "]+$/.test(valores.url) ) {
         errores.url = 'URL no válida';
     }
 
