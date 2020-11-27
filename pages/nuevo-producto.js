@@ -1,13 +1,11 @@
 import React, { useState, useContext } from "react";
 import { css } from "@emotion/react";
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import Router, { useRouter } from "next/router";
+import FileUploader from 'react-firebase-file-uploader';
 import Layout from "../components/layouts/Layout";
-import {
-  Formulario,
-  Campo,
-  InputSubmit,
-  Error,
-} from "../components/ui/Formulario";
+import { Formulario, Campo, InputSubmit, Error, } from "../components/ui/Formulario";
 
 //importando firebase context
 import { FirebaseContext } from "../firebase/";
@@ -24,7 +22,13 @@ const STATE_INICIAL = {
 };
 
 const NuevoProducto = () => {
-  
+
+  //state de la imagen
+  const [ imagen, guardarImagen ] = useState(null);
+  const [ cargando, guardarCargando ] = useState(false);
+  const [ urlimagen, guardarUrlImagen ] = useState('');
+
+  //state de los errores
   const [error, guardarError] = useState(false);
 
   const {
@@ -44,26 +48,52 @@ const NuevoProducto = () => {
   //context con las operaciones CRUD de firebase
   const { usuario, firebase } = useContext(FirebaseContext);
 
-  async function crearProducto() {
+  function crearProducto() {
+
     //si el usuario no esta autenticado llevar al login
     if(!usuario) {
-      return await router.push('/login');
+      return router.push('/login');
     }
 
     //objeto de nuevo producto
     const producto = {
       nombre,
-      empresa,
+      empresa,  
       url, 
+      urlimagen,
       descripcion,
       votos: 0,
       comentarios: [],
       creado: Date.now()
     }
-
+    
     //insertar productos en la base de datos
     firebase.db.collection('productos').add(producto);
 
+    //redireccionar luego de agregar un producto
+    return router.push('/');
+
+  }
+
+  // //funcion para guardar en memoria la imagen subida, usado para Firebase
+  // const handleChangeImage = e => {
+  //     guardarImagen(e.target.files[0]);
+  // };
+
+  const SubirACloudinary = async e => {
+    const files = e.target.files[0];
+    const formData = new FormData();
+    formData.append('upload_preset', 'product-hunt');
+    formData.append('file', files);
+    guardarCargando(true);
+
+    try {
+      const res = await axios.post(`https://api.cloudinary.com/v1_1/petportrait/upload`, formData)
+      guardarUrlImagen(res.data.secure_url)
+      guardarCargando(false)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -110,18 +140,19 @@ const NuevoProducto = () => {
                 />
               </Campo>
               {errores.empresa && <Error>{errores.empresa}</Error>}
-              {/* <Campo>
+
+              <Campo>
                 <label htmlFor="imagen">Imagen</label>
                 <input
-                  type="file"
-                  id="imagen"
-                  name="imagen"
-                  value={imagen}
-                  onChange={handleChange}
-                  // onBlur={handleBlur}
+                  type="file" 
+                  name="img"
+                  onChange={SubirACloudinary}
                 />
               </Campo>
-              {errores.imagen && <Error>{errores.imagen}</Error>} */}
+              { cargando 
+                ? <h3>Cargando...</h3> 
+                : <Campo><img className="clase" width="100" src={ urlimagen } /></Campo> 
+              }
               <Campo>
                 <label htmlFor="url">URL</label>
                 <input
@@ -153,8 +184,8 @@ const NuevoProducto = () => {
             </fieldset>
 
             {/* error desde firebase */}
-            {error && <Error>{error}</Error>}
-            <InputSubmit type="submit" value="Crear cuenta" />
+            {error && <Error><p>Hubo un error subiendo el producto</p></Error>}
+            <InputSubmit type="submit" value="Crear producto" />
           </Formulario>
         </div>
       </Layout>
