@@ -3,6 +3,16 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/layouts/Layout';
 import { FirebaseContext } from '../../firebase';
 import Error404 from '../../components/layouts/404';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+
+const ContenedorProducto = styled.div`
+    @media (min-width: 768px) {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        column-gap: 2rem;
+    }
+`;
 
 const Producto = () => {
 
@@ -32,12 +42,26 @@ const Producto = () => {
         }
     }, [id]);
 
+    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos } = producto
 
     return (  
         <Layout>
             <>
-                { error ? <Error404 /> : <h1>desde {id}</h1> }
-                
+                { error && <Error404 /> }
+                <div className="contenedor">
+                    <h1 css={css`
+                        text-align: center;
+                        margin-top: 5rem;
+                    `}>{nombre}</h1>
+                    <ContenedorProducto>
+                        <div>
+                            1
+                        </div>
+                        <aside>
+                            2
+                        </aside>
+                    </ContenedorProducto>
+                </div>
             </>
         </Layout>
     );
