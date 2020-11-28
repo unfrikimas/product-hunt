@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import Router from 'next/router';
 
 const InputText = styled.input`
     border: 1px solid var(--gris3);
@@ -33,6 +34,12 @@ const Buscar = () => {
         e.preventDefault();
 
         if(busqueda.trim() === '') return;
+
+        //redireccionar a /buscar
+        Router.push({
+            pathname: '/buscar',
+            query: { q : busqueda }
+        })
     }
 
     return (  
