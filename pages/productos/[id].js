@@ -47,20 +47,29 @@ const Producto = () => {
             }
             obtenerProducto();
         }
-    }, [id]);
+    }, [id, producto]);
     
-    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador } = producto
+    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador, haVotado } = producto
 
     const votarProducto = () => {
         if(!usuario) {
             return router.push('/login');
         }
 
-        //obbtener y sumar un nuevo voto
+        //obtener y sumar un nuevo voto
         const nuevoTotal = votos + 1
 
+        //verificar si el usuario actual ha votado
+        if(haVotado.includes(usuario.uid)) return;
+
+        //guardar el id del usuario q ha votado
+        const nuevoHaVotado = [ ...haVotado, usuario.uid ];
+
         //Actualizar en la BD
-        firebase.db.collection('productos').doc(id).update({ votos: nuevoTotal });
+        firebase.db.collection('productos').doc(id).update({ 
+            votos: nuevoTotal, 
+            haVotado: nuevoHaVotado 
+        });
 
         //Actualizar en el state
         guardarProducto({
