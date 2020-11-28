@@ -36,6 +36,7 @@ const Producto = () => {
     const [ producto, guardarProducto ] = useState({});
     const [ error, guardarError ] = useState(false);
     const [ comentario, guardarComentario ] = useState({});
+    const [ consultarDB, guardarConsultarDB ] = useState(true);
 
     //Routing para obtener el id actual
     const router = useRouter();
@@ -45,19 +46,21 @@ const Producto = () => {
     const { firebase, usuario } = useContext(FirebaseContext);
 
     useEffect(() => {
-        if(id) {
+        if(id && consultarDB) {
             const obtenerProducto = async () => {
                 const productoQuery = await firebase.db.collection('productos').doc(id);
                 const producto = await productoQuery.get();
                 if(producto.exists) {
                     guardarProducto(producto.data());
+                    guardarConsultarDB(false);
                 } else {
                     guardarError(true);
+                    guardarConsultarDB(false);
                 }
             }
             obtenerProducto();
         }
-    }, [id, producto]);
+    }, [id]);
     
     const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador, haVotado } = producto
 
@@ -86,6 +89,9 @@ const Producto = () => {
             ...producto,
             votos: nuevoTotal
         })
+
+        //hay un voto, consultar la BD
+        guardarConsultarDB(true);
     }
 
     //funciones para crear comentarios
@@ -127,12 +133,15 @@ const Producto = () => {
             comentarios: nuevosComentarios
         })
 
+        //hay un comentario, consultar la BD
+        guardarConsultarDB(true);        
+
     }
 
     return (  
         <Layout>
             <>
-                {Object.keys(producto).length === 0 && <p css={css`text-align: center; margin-top: 3rem;`}>Cargando...</p>}
+                {Object.keys(producto).length === 0 && !error ? ( <p css={css`text-align: center; margin-top: 3rem;`}>Cargando...</p> ) : null}
                 { error ? <Error404 /> : (
                     <div className="contenedor">
                         <h1 css={css`
@@ -187,7 +196,7 @@ const Producto = () => {
                                                 color: #888;
                                                 text-transform: capitalize;
                                             `}>Escrito por {coment.usuarioNombre}</p>
-                                            { esCreador(coment.usuarioId) && <CreadorProducto>Es creador</CreadorProducto> }
+                                            { esCreador(coment.usuarioId) && <CreadorProducto>Creador</CreadorProducto> }
                                         </li> 
                                     ))}
                                 </ul>
