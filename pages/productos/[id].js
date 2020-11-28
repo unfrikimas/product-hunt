@@ -48,8 +48,8 @@ const Producto = () => {
             obtenerProducto();
         }
     }, [id]);
-
-    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos } = producto
+    
+    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador } = producto
 
     return (  
         <Layout>
@@ -65,6 +65,10 @@ const Producto = () => {
                             {/* <TextoFecha>Publicado el {format(new Date(Date(creado)), 'MM/dd/yyyy')}</TextoFecha> */}
                             <img src={urlimagen}  />
                             <p>{descripcion}</p>
+                            <p css={css`
+                                font-size: 1.4rem;
+                                color: #888;
+                            `}>Publicado por {creador && creador.nombre} de {empresa} </p>
                             <h2>Agrega tu comentario</h2>
                             <form>
                                 <Campo>
@@ -92,6 +96,7 @@ const Producto = () => {
                                 bgColor="true"
                                 href={url}
                             >Visitar URL</Boton>
+                            
                             <div css={css`
                                 margin-top: 5rem;
                             `}>
