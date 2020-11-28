@@ -97,7 +97,7 @@ const DetallesProducto = ({producto}) => {
                             <p>{comentarios.length}</p>
                         </div>
                     </Comentarios>
-                    <TextoFecha>Publicado {formatDistanceToNow(new Date(creado), {locale: es})}</TextoFecha>
+                    <TextoFecha>Publicado hace {formatDistanceToNow(new Date(creado), {locale: es})}</TextoFecha>
                 </div>
             </DescripcionProducto>
             <Votos>

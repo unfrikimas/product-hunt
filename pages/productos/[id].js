@@ -20,6 +20,15 @@ const ContenedorProducto = styled.div`
 const TextoFecha = styled.p`
     font-size: 1.4rem;
 `;
+const CreadorProducto = styled.p`
+    padding: .5rem 2rem;
+    background-color: #DA552F;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+`;
 
 const Producto = () => {
 
@@ -85,6 +94,13 @@ const Producto = () => {
             ...comentario,
             [e.target.name] : e.target.value
         })
+    }
+
+    //Identifica si el comentario es del creador del producto
+    const esCreador = id => {
+        if(creador.id == id) {
+            return true;
+        }
     }
 
     const agregarComentario = e => {
@@ -170,7 +186,8 @@ const Producto = () => {
                                                 font-size: 1.4rem;
                                                 color: #888;
                                                 text-transform: capitalize;
-                                            `}>{coment.usuarioNombre}</p>
+                                            `}>Escrito por {coment.usuarioNombre}</p>
+                                            { esCreador(coment.usuarioId) && <CreadorProducto>Es creador</CreadorProducto> }
                                         </li> 
                                     ))}
                                 </ul>
