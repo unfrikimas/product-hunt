@@ -51,73 +51,95 @@ const Producto = () => {
     
     const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador } = producto
 
+    const votarProducto = () => {
+        if(!usuario) {
+            return router.push('/login');
+        }
+
+        //obbtener y sumar un nuevo voto
+        const nuevoTotal = votos + 1
+
+        //Actualizar en la BD
+        firebase.db.collection('productos').doc(id).update({ votos: nuevoTotal });
+
+        //Actualizar en el state
+        guardarProducto({
+            ...producto,
+            votos: nuevoTotal
+        })
+    }
+
     return (  
         <Layout>
             <>
-                { error && <Error404 /> }
-                <div className="contenedor">
-                    <h1 css={css`
-                        text-align: center;
-                        margin-top: 5rem;
-                    `}>{nombre}</h1>
-                    <ContenedorProducto>
-                        <div>
-                            {/* <TextoFecha>Publicado el {format(new Date(Date(creado)), 'MM/dd/yyyy')}</TextoFecha> */}
-                            <img src={urlimagen}  />
-                            <p>{descripcion}</p>
-                            <p css={css`
-                                font-size: 1.4rem;
-                                color: #888;
-                            `}>Publicado por {creador && creador.nombre} de {empresa} </p>
-
-                            { usuario && (
-                                <>
-                                    <h2>Agrega tu comentario</h2>
-                                    <form>
-                                        <Campo>
-                                            <input 
-                                                type="text"
-                                                name="mensaje"
-                                            />
-                                        </Campo>
-                                        <InputSubmit 
-                                            type="submit"
-                                            value="Agregar comentario"
-                                        />
-                                    </form>                                
-                                </>
-                            ) }
-
-                            <h2>Comentarios</h2>
-                            {/* {comentarios.map(comentario => (
-                               <li>
-                                   <p>{comentario.nombre}</p>
-                                   <p>{comentario.usuarioNombre}</p>
-                               </li> 
-                            ))} */}
-                        </div>
-                        <aside>
-                            <Boton
-                                target="_blank"
-                                bgColor="true"
-                                href={url}
-                            >Visitar URL</Boton>
-                            
-                            <div css={css`
-                                margin-top: 5rem;
-                            `}>
+                {Object.keys(producto).length === 0 && <p css={css`text-align: center; margin-top: 3rem;`}>Cargando...</p>}
+                { error ? <Error404 /> : (
+                    <div className="contenedor">
+                        <h1 css={css`
+                            text-align: center;
+                            margin-top: 5rem;
+                        `}>{nombre}</h1>
+                        <ContenedorProducto>
+                            <div>
+                                {/* <TextoFecha>Publicado el {format(new Date(Date(creado)), 'MM/dd/yyyy')}</TextoFecha> */}
+                                <img src={urlimagen}  />
+                                <p>{descripcion}</p>
                                 <p css={css`
-                                    text-align: center;
-                                `}>{votos} Votos</p>
+                                    font-size: 1.4rem;
+                                    color: #888;
+                                `}>Publicado por {creador && creador.nombre} de {empresa} </p>
+
                                 { usuario && (
-                                    <Boton>
-                                        Votar
-                                    </Boton>
+                                    <>
+                                        <h2>Agrega tu comentario</h2>
+                                        <form>
+                                            <Campo>
+                                                <input 
+                                                    type="text"
+                                                    name="mensaje"
+                                                />
+                                            </Campo>
+                                            <InputSubmit 
+                                                type="submit"
+                                                value="Agregar comentario"
+                                            />
+                                        </form>                                
+                                    </>
                                 ) }
+
+                                <h2>Comentarios</h2>
+                                {/* {comentarios.map(comentario => (
+                                <li>
+                                    <p>{comentario.nombre}</p>
+                                    <p>{comentario.usuarioNombre}</p>
+                                </li> 
+                                ))} */}
                             </div>
-                        </aside>
-                    </ContenedorProducto>
-                </div>
+                            <aside>
+                                <Boton
+                                    target="_blank"
+                                    bgColor="true"
+                                    href={url}
+                                >Visitar URL</Boton>
+                                
+                                <div css={css`
+                                    margin-top: 5rem;
+                                `}>
+                                    <p css={css`
+                                        text-align: center;
+                                    `}>{votos} Votos</p>
+                                    { usuario && (
+                                        <Boton
+                                            onClick={votarProducto}
+                                        >
+                                            Votar
+                                        </Boton>
+                                    ) }
+                                </div>
+                            </aside>
+                        </ContenedorProducto>
+                    </div>
+                )}
             </>
         </Layout>
     );
